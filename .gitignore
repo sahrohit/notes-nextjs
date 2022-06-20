@@ -33,3 +33,11 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+#Database
+*.sql
+*.sqlite
+
+#Environment Variables
+.env
+.env.local
