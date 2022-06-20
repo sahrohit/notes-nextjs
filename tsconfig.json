@@ -1,22 +1,35 @@
 {
-  "compilerOptions": {
-    "target": "es2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
-  },
-  "include": ["next-env.d.ts", "env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+	"compilerOptions": {
+		"target": "es2022",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+		"paths": {
+			"@components/*": ["./components/*"],
+			"@config/*": ["./config/*"],
+			"@entities/*": ["./entities/*"],
+			"@generated/*": ["./generated/*"],
+			"@graphql/*": ["./graphql/*"],
+			"@pages/*": ["./pages/*"],
+			"@public/*": ["./public/*"],
+			"@resolvers/*": ["./resolvers/*"],
+			"@styles/*": ["./styles/*"],
+			"@utils/*": ["./utils/*"]
+		}
+	},
+	"include": ["next-env.d.ts", "env.d.ts", "**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

@@ -1,0 +1,9 @@
+query Todos($identifier: String!) {
+	todos(identifier: $identifier) {
+		id
+		body
+		title
+		identifier
+		completed
+	}
+}

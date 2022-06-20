@@ -1,8 +1,22 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from "@config/theme";
+
+const client = new ApolloClient({
+	uri: "/api/graphql",
+	cache: new InMemoryCache(),
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+	return (
+		<ApolloProvider client={client}>
+			<ChakraProvider theme={theme}>
+				<Component {...pageProps} />
+			</ChakraProvider>
+		</ApolloProvider>
+	);
 }
 
-export default MyApp
+export default MyApp;
