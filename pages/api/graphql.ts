@@ -4,7 +4,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "@resolvers/hello";
 import AppDataSource from "@config/data-source";
-import { UserResolver } from "@resolvers/user";
 import { TodoResolver } from "@resolvers/todo";
 
 AppDataSource.initialize()
@@ -16,7 +15,7 @@ AppDataSource.initialize()
 
 const server = new ApolloServer({
 	schema: await buildSchema({
-		resolvers: [HelloResolver, UserResolver, TodoResolver],
+		resolvers: [HelloResolver, TodoResolver],
 		validate: false,
 	}),
 });

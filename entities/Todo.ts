@@ -1,5 +1,12 @@
 import { ObjectType, Field, Int } from "type-graphql";
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+	BaseEntity,
+	Entity,
+	Column,
+	PrimaryGeneratedColumn,
+	CreateDateColumn,
+	UpdateDateColumn,
+} from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -23,4 +30,12 @@ export class Todo extends BaseEntity {
 	@Field()
 	@Column({ type: "boolean", default: false })
 	completed!: boolean;
+
+	@Field(() => String)
+	@CreateDateColumn()
+	createdAt = new Date();
+
+	@Field(() => String)
+	@UpdateDateColumn()
+	updatedAt = new Date();
 }

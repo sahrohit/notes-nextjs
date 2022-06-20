@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
 import AppDataSource from "../config/data-source";
 import { generateIdentifier } from "../utils/generateIdentifier";
 import { Todo } from "../entities/Todo";
@@ -27,20 +27,21 @@ export class TodoResolver {
 
 	@Mutation(() => Todo)
 	async updateTodo(
-		@Arg("id") id: number,
+		@Arg("id", () => Int) id: number,
 		@Arg("identifier") identifier: string,
-		@Arg("title") title: string,
-		@Arg("body") body: string
+		@Arg("title", { nullable: true }) title: string,
+		@Arg("body", { nullable: true }) body: string,
+		@Arg("completed", () => Boolean, { nullable: true }) completed: boolean
 	): Promise<Todo> {
-		const result = await AppDataSource.createQueryBuilder()
+		await AppDataSource.createQueryBuilder()
 			.update(Todo)
-			.set({ identifier, title, body })
-			.where("id = :id", {
+			.set({ identifier, title, body, completed })
+			.where("id = :id and identifier = :identifier", {
 				id,
+				identifier,
 			})
-			.returning("*")
 			.execute();
-		return result.raw[0];
+		return Todo.findOneOrFail({ where: { id } });
 	}
 
 	@Mutation(() => Todo)

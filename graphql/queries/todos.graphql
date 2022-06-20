@@ -5,5 +5,7 @@ query Todos($identifier: String!) {
 		title
 		identifier
 		completed
+		createdAt
+		updatedAt
 	}
 }

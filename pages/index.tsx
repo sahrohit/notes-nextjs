@@ -1,18 +1,28 @@
-import React from "react";
+import { Divider, Flex, Text, VStack } from "@chakra-ui/react";
+import Options from "@components/Options";
+import FullPageLoadingSpinner from "@components/shared/FullPageLoadingSpinner";
+import TodoItem from "@components/TodoItem";
+import { Todo, useTodosLazyQuery } from "@generated/graphql";
+import { useIdentifier } from "@utils/localStorage";
 import type { NextPage } from "next";
-import { Todo, useTodosQuery } from "@generated/graphql";
-import { Heading, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-	const { data, loading, error } = useTodosQuery({
+	const { identifier } = useIdentifier();
+
+	const [getTodos, { data, loading, error }] = useTodosLazyQuery({
 		variables: {
-			identifier: "KLCOPY",
+			identifier: identifier as string,
 		},
 		fetchPolicy: "network-only",
 	});
 
+	useEffect(() => {
+		getTodos();
+	});
+
 	if (loading && !data) {
-		return <h1>Loading...</h1>;
+		return <FullPageLoadingSpinner />;
 	}
 
 	if (!loading && error) {
@@ -21,14 +31,47 @@ const Home: NextPage = () => {
 
 	return (
 		<>
-			<h1>Todos</h1>
-			{data?.todos.map((todo: Todo) => (
-				<div key={todo.id}>
-					<Heading>{todo.title}</Heading>
-					<Text>{todo.body}</Text>
-					<Text>{todo.completed ? "Completed" : "Not Completed"}</Text>
-				</div>
-			))}
+			<Text textAlign="center" fontSize={"4xl"} m={8} fontWeight={"semibold"}>
+				Todos
+			</Text>
+			<VStack mx={{ base: 8, md: "20%", lg: "30%" }}>
+				<Options />
+				{data?.todos
+					.filter((todo) => !todo.completed)
+					?.map((todo: Todo) => (
+						<TodoItem
+							key={todo.id}
+							id={todo.id}
+							body={todo.body}
+							title={todo.title}
+							completed={todo.completed}
+							createdAt={todo.createdAt}
+						/>
+					))}
+
+				{data?.todos?.filter((todo) => todo.completed) && (
+					<Flex align="center" w={"full"}>
+						<Divider />
+						<Text padding="2" colorScheme={"gray"}>
+							Completed
+						</Text>
+						<Divider />
+					</Flex>
+				)}
+
+				{data?.todos
+					.filter((todo) => todo.completed)
+					?.map((todo: Todo) => (
+						<TodoItem
+							key={todo.id}
+							id={todo.id}
+							body={todo.body}
+							title={todo.title}
+							completed={todo.completed}
+							createdAt={todo.createdAt}
+						/>
+					))}
+			</VStack>
 		</>
 	);
 };

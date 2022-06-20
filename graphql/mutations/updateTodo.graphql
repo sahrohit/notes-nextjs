@@ -1,0 +1,21 @@
+mutation UpdateTodo(
+	$id: Int!
+	$identifier: String!
+	$title: String
+	$body: String
+	$completed: Boolean
+) {
+	updateTodo(
+		id: $id
+		identifier: $identifier
+		title: $title
+		body: $body
+		completed: $completed
+	) {
+		id
+		title
+		identifier
+		completed
+		identifier
+	}
+}
