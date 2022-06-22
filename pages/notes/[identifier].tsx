@@ -1,15 +1,16 @@
 import { Box, SimpleGrid, Text } from "@chakra-ui/react";
 import CreatePost from "@components/CreatePost";
-import NoteItem from "@components/NoteItem";
 import Options from "@components/Options";
 import FullPageLoadingSpinner from "@components/shared/FullPageLoadingSpinner";
+import UneditableNoteItem from "@components/UneditableNoteItem";
 import { Note, useNotesLazyQuery } from "@generated/graphql";
-import { useIdentifier } from "@utils/localStorage";
-import type { NextPage } from "next";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
-const Home: NextPage = () => {
-	const { identifier } = useIdentifier();
+const SharedPage = () => {
+	const router = useRouter();
+
+	const { identifier } = router.query;
 
 	const [getNotes, { data, loading, error }] = useNotesLazyQuery({
 		variables: {
@@ -19,9 +20,12 @@ const Home: NextPage = () => {
 	});
 
 	useEffect(() => {
-		console.log("UseEffect ran");
 		getNotes();
 	}, []);
+
+	if (!identifier) {
+		return <FullPageLoadingSpinner />;
+	}
 
 	if (loading && !data) {
 		return <FullPageLoadingSpinner />;
@@ -32,7 +36,6 @@ const Home: NextPage = () => {
 			console.log("Error avoided !");
 			getNotes();
 		}
-		return <h1>{JSON.stringify(error)}</h1>;
 	}
 
 	return (
@@ -46,9 +49,7 @@ const Home: NextPage = () => {
 				Notes
 			</Text>
 			<Box mx={{ base: 8, md: 8, lg: 8 }}>
-				<Options />
-
-				<CreatePost />
+				{/* <Options /> */}
 
 				<SimpleGrid
 					columns={[1, 1, 2, 2, 3, 4]}
@@ -58,7 +59,7 @@ const Home: NextPage = () => {
 					{data?.notes
 						.sort((a, b) => parseInt(b.updatedAt) - parseInt(a.updatedAt))
 						?.map((note: Note) => (
-							<NoteItem
+							<UneditableNoteItem
 								key={note.id}
 								id={note.id}
 								body={note.body}
@@ -74,4 +75,4 @@ const Home: NextPage = () => {
 	);
 };
 
-export default Home;
+export default SharedPage;

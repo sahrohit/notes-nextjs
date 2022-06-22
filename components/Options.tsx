@@ -38,7 +38,7 @@ const Options = () => {
 				>
 					<HStack w={"full"} justifyContent={"flex-end"}>
 						<Tooltip
-							label="Access your todolist anywhere with this unique identifier."
+							label="Access your note anywhere with this unique identifier."
 							aria-label="A tooltip"
 							placement="top"
 						>

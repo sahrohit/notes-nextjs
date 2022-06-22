@@ -1,5 +1,5 @@
-query Todos($identifier: String!) {
-	todos(identifier: $identifier) {
+query Notes($identifier: String!) {
+	notes(identifier: $identifier) {
 		id
 		body
 		title

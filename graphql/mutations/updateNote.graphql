@@ -1,11 +1,11 @@
-mutation UpdateTodo(
+mutation UpdateNote(
 	$id: Int!
 	$identifier: String!
 	$title: String
 	$body: String
 	$completed: Boolean
 ) {
-	updateTodo(
+	updateNote(
 		id: $id
 		identifier: $identifier
 		title: $title

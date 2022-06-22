@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Todo } from "@entities/Todo";
+import { Note } from "@entities/Note";
 
 const AppDataSource = new DataSource({
 	type: "sqlite",
 	database: "database.sql",
-	entities: [Todo],
+	entities: [Note],
 	synchronize: true,
 });
 

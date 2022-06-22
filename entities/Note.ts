@@ -10,7 +10,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class Todo extends BaseEntity {
+export class Note extends BaseEntity {
 	@Field(() => Int)
 	@PrimaryGeneratedColumn()
 	id!: number;
@@ -33,9 +33,9 @@ export class Todo extends BaseEntity {
 
 	@Field(() => String)
 	@CreateDateColumn()
-	createdAt = new Date();
+	createdAt!: Date;
 
 	@Field(() => String)
 	@UpdateDateColumn()
-	updatedAt = new Date();
+	updatedAt!: Date;
 }

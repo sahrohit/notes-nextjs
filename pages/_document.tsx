@@ -1,5 +1,6 @@
 import { ColorModeScript } from "@chakra-ui/react";
 import NextDocument, { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 import theme from "../config/theme";
 
 export default class Document extends NextDocument {
@@ -14,7 +15,7 @@ export default class Document extends NextDocument {
 						crossOrigin="true"
 					/>
 					<link
-						href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+						href="https://fonts.googleapis.com/css2?family=Inter&family=Rubik+Moonrocks&display=swap"
 						rel="stylesheet"
 					/>
 				</Head>
@@ -23,6 +24,8 @@ export default class Document extends NextDocument {
 					<Main />
 					<NextScript />
 				</body>
+				<Script src="path/to/dayjs/plugin/advancedFormat" />
+				<Script>dayjs.extend(window.dayjs_plugin_advancedFormat)</Script>
 			</Html>
 		);
 	}
