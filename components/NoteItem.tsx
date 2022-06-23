@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
-	Badge,
 	Button,
 	FormControl,
 	HStack,
@@ -13,84 +13,55 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
-	Text,
 	Textarea,
+	useColorModeValue,
 	useDisclosure,
 	useToast,
-	VStack,
 } from "@chakra-ui/react";
 import {
 	useDeleteNoteMutation,
 	useUpdateNoteMutation,
 } from "@generated/graphql";
-import { useIdentifier } from "@utils/localStorage";
-import dayjs from "dayjs";
+import { useLocalStorage } from "@utils/useLocalStorage";
 import { Field, FieldProps, Form, Formik } from "formik";
+import { useRef } from "react";
+import ResizeTextarea from "react-textarea-autosize";
+import ListBox from "./ListBox";
+import RiskyAction from "./shared/RiskyAction";
 
 interface NoteItemProps {
 	id: number;
 	title: string;
 	body: string;
-	completed: boolean;
 	createdAt?: string;
 	updatedAt: string;
 }
 
-const NoteItem = ({ id, title, body, completed, updatedAt }: NoteItemProps) => {
-	const { identifier } = useIdentifier();
+const NoteItem = ({ id, title, body, updatedAt }: NoteItemProps) => {
+	const [identifier] = useLocalStorage({
+		key: "identifier",
+	});
+
+	const childRef: any = useRef();
+
 	const toast = useToast();
 	const [updateNoteMutation] = useUpdateNoteMutation();
 	const [deleteNoteMutation] = useDeleteNoteMutation();
-
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	return (
 		<>
-			<HStack
-				shadow={"lg"}
-				borderRadius="lg"
-				border="1px solid white"
-				m={2}
-				p={4}
-				bg="white"
-				w={"full"}
-				onClick={onOpen}
-			>
-				<VStack w={"full"} align="left">
-					<Text fontSize="xl">{title}</Text>
-					<Text fontSize="md">{body}</Text>
-
-					<VStack w={"full"} alignItems={"flex-start"}>
-						<HStack>
-							<Badge
-								px={2}
-								fontSize="0.8em"
-								borderRadius={"lg"}
-								colorScheme="green"
-							>
-								Hello
-							</Badge>
-							<Badge
-								px={2}
-								fontSize="0.8em"
-								borderRadius={"lg"}
-								colorScheme="red"
-							>
-								Again
-							</Badge>
-						</HStack>
-						<Text w={"full"} align={"right"} fontSize={"sm"}>
-							{dayjs(parseInt(updatedAt)).format("MMMM DD, YYYY h:mm A")}
-						</Text>
-					</VStack>
-				</VStack>
-			</HStack>
+			<ListBox
+				body={body}
+				onOpen={onOpen}
+				title={title}
+				updatedAt={updatedAt}
+			/>
 
 			<Formik
 				initialValues={{
 					title: title,
 					body: body,
-					completed: completed,
 				}}
 				onSubmit={(values, actions) => {
 					updateNoteMutation({
@@ -118,10 +89,11 @@ const NoteItem = ({ id, title, body, completed, updatedAt }: NoteItemProps) => {
 						}}
 						size={"md"}
 						isOpen={isOpen}
+						scrollBehavior={"outside"}
 					>
 						<ModalOverlay />
 						<Form>
-							<ModalContent>
+							<ModalContent bg={useColorModeValue("white", "black")}>
 								<ModalHeader>
 									<Field name="title">
 										{({ field, form }: FieldProps) => (
@@ -156,6 +128,8 @@ const NoteItem = ({ id, title, body, completed, updatedAt }: NoteItemProps) => {
 													border="none"
 													focusBorderColor="none"
 													outline="none"
+													resize="none"
+													as={ResizeTextarea}
 												/>
 											</FormControl>
 										)}
@@ -164,15 +138,17 @@ const NoteItem = ({ id, title, body, completed, updatedAt }: NoteItemProps) => {
 								<ModalFooter>
 									<HStack w={"full"} justify={"space-between"}>
 										<HStack>
-											<IconButton
-												colorScheme={"red"}
-												variant="ghost"
-												icon={<DeleteIcon />}
-												aria-label="Delete"
-												onClick={() => {
+											<RiskyAction
+												ref={childRef}
+												title={`Are you sure you want to delete the note ${title}?`}
+												body={`This action cannot be undone`}
+												onConfirm={() => {
 													deleteNoteMutation({
 														variables: {
 															id,
+														},
+														update: (cache) => {
+															cache.evict({ fieldName: "notes" });
 														},
 													});
 													toast({
@@ -181,7 +157,15 @@ const NoteItem = ({ id, title, body, completed, updatedAt }: NoteItemProps) => {
 														isClosable: true,
 													});
 												}}
-											/>
+											>
+												<IconButton
+													colorScheme={"red"}
+													variant="ghost"
+													icon={<DeleteIcon />}
+													aria-label="Delete"
+													onClick={() => childRef.current.openModal()}
+												/>
+											</RiskyAction>
 										</HStack>
 										<Button
 											type="submit"

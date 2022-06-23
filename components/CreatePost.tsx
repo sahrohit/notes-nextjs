@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import {
 	Button,
 	Divider,
@@ -5,18 +6,22 @@ import {
 	HStack,
 	Input,
 	Textarea,
+	useColorModeValue,
 	VStack,
 } from "@chakra-ui/react";
 import { useCreateNoteMutation } from "@generated/graphql";
-import { useIdentifier } from "@utils/localStorage";
+import { useLocalStorage } from "@utils/useLocalStorage";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useState } from "react";
 import ResizeTextarea from "react-textarea-autosize";
 
 const CreatePost = () => {
-	const { identifier } = useIdentifier();
 	const [expanded, setExpanded] = useState(false);
 	const [createNote] = useCreateNoteMutation();
+
+	const [identifier, setIdentifier] = useLocalStorage({
+		key: "identifier",
+	});
 
 	return (
 		<HStack w={"full"} justifyContent={"center"}>
@@ -26,17 +31,24 @@ const CreatePost = () => {
 					body: "",
 				}}
 				onSubmit={async (values, actions) => {
-					const { errors } = await createNote({
-						variables: {
-							identifier: identifier as string,
-							...values,
-						},
+					console.log(values);
+					const { errors, data } = await createNote({
+						variables:
+							identifier && identifier?.length > 0
+								? {
+										identifier,
+										...values,
+							 }
+								: { ...values },
 						update: (cache) => {
 							cache.evict({ fieldName: "notes" });
 						},
 					});
 
 					if (!errors) {
+						if (data?.createNote.identifier) {
+							setIdentifier(data?.createNote.identifier);
+						}
 						actions.resetForm();
 						actions.setSubmitting(false);
 						setExpanded(false);
@@ -48,10 +60,11 @@ const CreatePost = () => {
 						<VStack
 							shadow={"md"}
 							borderRadius="lg"
-							border="1px solid white"
+							border="1px solid"
+							borderColor={useColorModeValue("white", "blackAlpha.400")}
 							m={2}
 							p={4}
-							bg="white"
+							bg={useColorModeValue("white", "blackAlpha.400")}
 							w={"500px"}
 						>
 							<Field name="title">
@@ -62,32 +75,11 @@ const CreatePost = () => {
 										<Input
 											{...field}
 											id="title"
-											placeholder="Title"
+											placeholder={expanded ? "Title" : "Take a note"}
 											size="xl"
 											border="none"
 											focusBorderColor="none"
 											outline="none"
-										/>
-									</FormControl>
-								)}
-							</Field>
-							<Divider borderColor={"gray"} />
-							<Field name="body">
-								{({ field, form }: FieldProps) => (
-									<FormControl
-										isInvalid={!!(form.errors.title && form.touched.title)}
-									>
-										<Textarea
-											{...field}
-											as={ResizeTextarea}
-											id="body"
-											placeholder="Body"
-											size="xl"
-											border="none"
-											focusBorderColor="none"
-											outline="none"
-											rows={expanded ? 3 : 1}
-											resize="none"
 											onClick={() => {
 												setExpanded(true);
 											}}
@@ -99,15 +91,38 @@ const CreatePost = () => {
 								)}
 							</Field>
 							{expanded && (
-								<HStack w={"full"} justifyContent={"flex-end"}>
-									<Button
-										type="submit"
-										size="sm"
-										isLoading={props.isSubmitting}
-									>
-										Save
-									</Button>
-								</HStack>
+								<>
+									<Divider borderColor={"gray"} />
+									<Field name="body">
+										{({ field, form }: FieldProps) => (
+											<FormControl
+												isInvalid={!!(form.errors.title && form.touched.title)}
+											>
+												<Textarea
+													{...field}
+													as={ResizeTextarea}
+													id="body"
+													placeholder={expanded ? "Take a note" : "Bodys"}
+													size="xl"
+													border="none"
+													focusBorderColor="none"
+													outline="none"
+													rows={expanded ? 3 : 1}
+													resize="none"
+												/>
+											</FormControl>
+										)}
+									</Field>
+									<HStack w={"full"} justifyContent={"flex-end"}>
+										<Button
+											type="submit"
+											size="sm"
+											isLoading={props.isSubmitting}
+										>
+											Save
+										</Button>
+									</HStack>
+								</>
 							)}
 						</VStack>
 					</Form>

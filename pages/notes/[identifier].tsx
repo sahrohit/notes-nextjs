@@ -1,11 +1,9 @@
 import { Box, SimpleGrid, Text } from "@chakra-ui/react";
-import CreatePost from "@components/CreatePost";
-import Options from "@components/Options";
 import FullPageLoadingSpinner from "@components/shared/FullPageLoadingSpinner";
 import UneditableNoteItem from "@components/UneditableNoteItem";
 import { Note, useNotesLazyQuery } from "@generated/graphql";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const SharedPage = () => {
 	const router = useRouter();
@@ -64,7 +62,6 @@ const SharedPage = () => {
 								id={note.id}
 								body={note.body}
 								title={note.title}
-								completed={note.completed}
 								createdAt={note.createdAt}
 								updatedAt={note.updatedAt}
 							/>

@@ -16,7 +16,7 @@ export class Note extends BaseEntity {
 	id!: number;
 
 	@Field()
-	@Column()
+	@Column({ nullable: true })
 	identifier!: string;
 
 	@Field()
@@ -26,10 +26,6 @@ export class Note extends BaseEntity {
 	@Field()
 	@Column({ type: "text" })
 	body!: string;
-
-	@Field()
-	@Column({ type: "boolean", default: false })
-	completed!: boolean;
 
 	@Field(() => String)
 	@CreateDateColumn()

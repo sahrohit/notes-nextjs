@@ -32,12 +32,11 @@ export class NoteResolver {
 		@Arg("id", () => Int) id: number,
 		@Arg("identifier") identifier: string,
 		@Arg("title", { nullable: true }) title: string,
-		@Arg("body", { nullable: true }) body: string,
-		@Arg("completed", () => Boolean, { nullable: true }) completed: boolean
+		@Arg("body", { nullable: true }) body: string
 	): Promise<Note> {
 		await AppDataSource.createQueryBuilder()
 			.update(Note)
-			.set({ identifier, title, body, completed })
+			.set({ identifier, title, body })
 			.where("id = :id and identifier = :identifier", {
 				id,
 				identifier,

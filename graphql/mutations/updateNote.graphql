@@ -3,19 +3,11 @@ mutation UpdateNote(
 	$identifier: String!
 	$title: String
 	$body: String
-	$completed: Boolean
 ) {
-	updateNote(
-		id: $id
-		identifier: $identifier
-		title: $title
-		body: $body
-		completed: $completed
-	) {
+	updateNote(id: $id, identifier: $identifier, title: $title, body: $body) {
 		id
 		title
-		identifier
-		completed
+		body
 		identifier
 	}
 }
