@@ -28,11 +28,11 @@
 		"graphql": "^15.3.0",
 		"micro": "^9.3.4",
 		"next": "12.1.6",
+		"pg": "^8.7.3",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-textarea-autosize": "^8.3.4",
 		"reflect-metadata": "^0.1.13",
-		"sqlite3": "^5.0.8",
 		"type-graphql": "^1.1.1",
 		"typeorm": "^0.3.6"
 	},
