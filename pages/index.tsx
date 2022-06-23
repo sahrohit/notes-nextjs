@@ -3,9 +3,10 @@ import CreatePost from "@components/CreatePost";
 import NoteItem from "@components/NoteItem";
 import Options from "@components/Options";
 import FullPageLoadingSpinner from "@components/shared/FullPageLoadingSpinner";
-import { Note, useNotesQuery } from "@generated/graphql";
+import { Note, useNotesLazyQuery } from "@generated/graphql";
 import { useLocalStorage } from "@utils/useLocalStorage";
 import type { NextPage } from "next";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
 	const [identifier] = useLocalStorage({
@@ -13,18 +14,28 @@ const Home: NextPage = () => {
 		defaultValue: "",
 	});
 
-	const { data, loading, error } = useNotesQuery({
+	const [getNotes, { data, loading, error }] = useNotesLazyQuery({
 		variables: {
 			identifier: identifier as string,
 		},
 		fetchPolicy: "network-only",
 	});
 
+	useEffect(() => {
+		getNotes();
+	}, []);
+
 	if (loading && !data) {
 		return <FullPageLoadingSpinner />;
 	}
 
 	if (!loading && error) {
+		if (
+			error.message.includes("DataSource is not set for this entity.") &&
+			identifier
+		) {
+			getNotes();
+		}
 		return <h1>{JSON.stringify(error)}</h1>;
 	}
 

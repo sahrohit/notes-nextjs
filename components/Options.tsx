@@ -35,7 +35,7 @@ const Options = () => {
 
 	const { hasCopied, onCopy } = useClipboard(identifier as string);
 	const { hasCopied: hasCopiedLink, onCopy: onCopyLink } = useClipboard(
-		`${window.location.origin}/notes/${identifier}`
+		`https://keepmynotes.vercel.app/notes/${identifier}`
 	);
 
 	useEffect(() => {
